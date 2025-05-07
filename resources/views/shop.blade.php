@@ -29,7 +29,7 @@
         <div class="pt-4 pt-lg-0"></div>
 
         <div class="accordion" id="categories-list">
-          <div class="accordion-item mb-4 pb-3">
+          <div class="accordion-item mb-4 pb-3" style="padding-top: 80px">
             <h5 class="accordion-header" id="accordion-heading-1">
               <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
                 data-bs-target="#accordion-filter-1" aria-expanded="true" aria-controls="accordion-filter-1">
@@ -149,68 +149,26 @@
             }
           }'>
           <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <div class="slide-split h-100 d-block d-md-flex overflow-hidden">
-                <div class="slide-split_text position-relative d-flex align-items-center"
-                  style="background-color: #f5e6e0;">
-                  <div class="slideshow-text container p-3 p-xl-5">
-                    <h2
-                      class="text-uppercase section-title fw-normal mb-3 animate animate_fade animate_btt animate_delay-2">
-                      Women's <br /><strong>ACCESSORIES</strong></h2>
-                    <p class="mb-0 animate animate_fade animate_btt animate_delay-5">Accessories are the best way to
-                      update your look. Add a title edge with new styles and new colors, or go for timeless pieces.</h6>
+            @foreach ($slides as $slide)
+              <div class="swiper-slide">
+                <div class="slide-split h-100 d-block d-md-flex overflow-hidden">
+                  <div class="slide-split_text position-relative d-flex align-items-center"
+                    style="background-color: #f5e6e0;">
+                    <div class="slideshow-text container p-3 p-xl-5">
+                      <h2
+                        class="text-uppercase section-title fw-normal mb-3 animate animate_fade animate_btt animate_delay-2">
+                        Brands</h2>
+                      <p class="mb-0 animate animate_fade animate_btt animate_delay-5"> {{$slide->title}}</h6>
+                    </div>
                   </div>
-                </div>
-                <div class="slide-split_media position-relative">
-                  <div class="slideshow-bg" style="background-color: #f5e6e0;">
-                    <img loading="lazy" src="assets/images/shop/shop_banner3.jpg" width="630" height="450"
-                      alt="Women's accessories" class="slideshow-bg__img object-fit-cover" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="swiper-slide">
-              <div class="slide-split h-100 d-block d-md-flex overflow-hidden">
-                <div class="slide-split_text position-relative d-flex align-items-center"
-                  style="background-color: #f5e6e0;">
-                  <div class="slideshow-text container p-3 p-xl-5">
-                    <h2
-                      class="text-uppercase section-title fw-normal mb-3 animate animate_fade animate_btt animate_delay-2">
-                      Women's <br /><strong>ACCESSORIES</strong></h2>
-                    <p class="mb-0 animate animate_fade animate_btt animate_delay-5">Accessories are the best way to
-                      update your look. Add a title edge with new styles and new colors, or go for timeless pieces.</h6>
-                  </div>
-                </div>
-                <div class="slide-split_media position-relative">
-                  <div class="slideshow-bg" style="background-color: #f5e6e0;">
-                    <img loading="lazy" src="assets/images/shop/shop_banner3.jpg" width="630" height="450"
-                      alt="Women's accessories" class="slideshow-bg__img object-fit-cover" />
+                  <div class="slide-split_media position-relative">
+                    <div class="slideshow-bg" style="background-color: #f5e6e0;">
+                      <img loading="lazy" src="{{asset('uploads/slides')}}/{{$slide->image}}" width="630" height="450" alt="{{$slide->image}}" class="slideshow-bg__img object-fit-cover" />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div class="swiper-slide">
-              <div class="slide-split h-100 d-block d-md-flex overflow-hidden">
-                <div class="slide-split_text position-relative d-flex align-items-center"
-                  style="background-color: #f5e6e0;">
-                  <div class="slideshow-text container p-3 p-xl-5">
-                    <h2
-                      class="text-uppercase section-title fw-normal mb-3 animate animate_fade animate_btt animate_delay-2">
-                      Women's <br /><strong>ACCESSORIES</strong></h2>
-                    <p class="mb-0 animate animate_fade animate_btt animate_delay-5">Accessories are the best way to
-                      update your look. Add a title edge with new styles and new colors, or go for timeless pieces.</h6>
-                  </div>
-                </div>
-                <div class="slide-split_media position-relative">
-                  <div class="slideshow-bg" style="background-color: #f5e6e0;">
-                    <img loading="lazy" src="assets/images/shop/shop_banner3.jpg" width="630" height="450"
-                      alt="Women's accessories" class="slideshow-bg__img object-fit-cover" />
-                  </div>
-                </div>
-              </div>
-            </div>
+            @endforeach
           </div>
 
           <div class="container p-3 p-xl-5">
@@ -299,7 +257,7 @@
                         <input type="hidden" name="id" value="{{$product->id}}">
                         <input type="hidden" name="name" value="{{$product->name}}">
                         <input type="hidden" name="quantity" value="1">
-                        <input type="hidden" name="price" value="{{$product->sale_price == '' ? $product->regular_price : $product->sale_price}}">
+                        <input type="hidden" name="price" value="{{$product->regular_price}}">
                         <button type="submit" class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium" data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
                       </form>
                     @endif
@@ -310,32 +268,10 @@
                     <h6 class="pc__title"><a href="{{route('shop.product.details', ['product_slug' =>$product->slug])}}">{{$product->name}}</a></h6>
                     <div class="product-card__price d-flex">
                       <span class="money price">
-                          @if($product->sale_price)
-                              <s>${{ $product->regular_price }} </s> ${{ $product->sale_price }}
-                          @else
-                              ${{ $product->regular_price }}
-                          @endif
+                          WholeSale Price: {{$product->sale_price }} <br>
+                          Retail Price: ₱{{ $product->regular_price }}
+                      
                       </span>
-                    </div>
-                    <div class="product-card__review d-flex align-items-center">
-                      <div class="reviews-group d-flex">
-                          <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
-                          <use href="#icon_star" />
-                          </svg>
-                          <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
-                          <use href="#icon_star" />
-                          </svg>
-                          <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
-                          <use href="#icon_star" />
-                          </svg>
-                          <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
-                          <use href="#icon_star" />
-                          </svg>
-                          <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
-                          <use href="#icon_star" />
-                          </svg>
-                      </div>
-                      <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
                     </div>
                     @if(Cart::instance('wishlist')->content()->where('id',$product->id)->count() > 0)
                     <form method="POST" action="{{route('wishlist.item.remove',['rowId'=>Cart::instance('wishlist')->content()->where('id',$product->id)->first()->rowId])}}">
@@ -353,7 +289,7 @@
 
                         <input type="hidden" name="id" value="{{$product->id}}" />
                         <input type="hidden" name="name" value="{{$product->name}}" />
-                        <input type="hidden" name="price" value="{{$product->sale_price == '' ? $product->regular_price : $product->sale_price}}" />
+                        <input type="hidden" name="price" value="{{$product->regular_price}}" />
                         <input type="hidden" name="quantity" value="1" />
 
                         <button type="submit" class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">

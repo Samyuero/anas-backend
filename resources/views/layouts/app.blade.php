@@ -16,6 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Allura&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/swiper.min.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/sweetalert.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
         integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
@@ -26,6 +27,37 @@
 </head>
 
 <body class="gradient-bg">
+  <style>
+    #header {
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+
+    .logo__image {
+      max-width: 220px;
+    }
+
+    .product-item .image {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      gap: 10px;
+      flex-shrink: 0;
+      padding: 5px;
+      border-radius: 10px;
+      background: #EFF4F8;
+    }
+
+    #box-content-search li {
+      list-style: none;
+    }
+
+    #box-content-search .product-item {
+      margin-bottom: 10px;
+    }
+  </style>
     <svg class="d-none">
       <symbol id="icon_nav" viewBox="0 0 25 18">
         <rect width="25" height="2" />
@@ -314,13 +346,13 @@
                 <a href="{{route('shop.index')}}" class="navigation__link">Shop</a>
               </li>
               <li class="navigation__item">
-                <a href="cart.html" class="navigation__link">Cart</a>
+                <a href="{{route('cart.index')}}" class="navigation__link">Cart</a>
               </li>
               <li class="navigation__item">
-                <a href="about.html" class="navigation__link">About</a>
+                <a href="javascript:void(0)" class="navigation__link">About</a>
               </li>
               <li class="navigation__item">
-                <a href="contact.html" class="navigation__link">Contact</a>
+                <a href="{{route('home.contact')}}" class="navigation__link">Contact</a>
               </li>
             </ul>
           </div>
@@ -333,10 +365,7 @@
               <use href="#icon_user" />
             </svg>
             <span class="d-inline-block ms-2 text-uppercase align-middle fw-medium">My Account</span>
-          </div>
-  
-  
-  
+          </div>  
           <ul class="container social-links list-unstyled d-flex flex-wrap mb-0">
             <li>
               <a href="#" class="footer__social-link d-block ps-0">
@@ -409,7 +438,7 @@
                 <a href="about.html" class="navigation__link">About</a>
               </li>
               <li class="navigation__item">
-                <a href="contact.html" class="navigation__link">Contact</a>
+                <a href="{{route('home.contact')}}" class="navigation__link">Contact</a>
               </li>
             </ul>
           </nav>
@@ -427,10 +456,10 @@
               </div>
   
               <div class="search-popup js-hidden-content">
-                <form action="#" method="GET" class="search-field container">
+                <form action="" method="GET" class="search-field container">
                   <p class="text-uppercase text-secondary fw-medium mb-4">What are you looking for?</p>
                   <div class="position-relative">
-                    <input class="search-field__input search-popup__input w-100 fw-medium" type="text"
+                    <input class="search-field__input search-popup__input w-100 fw-medium" id="search-input" type="text"
                       name="search-keyword" placeholder="Search products" />
                     <button class="btn-icon search-popup__submit" type="submit">
                       <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
@@ -442,20 +471,8 @@
                   </div>
   
                   <div class="search-popup__results">
-                    <div class="sub-menu search-suggestion">
-                      <h6 class="sub-menu__title fs-base">Quicklinks</h6>
-                      <ul class="sub-menu__list list-unstyled">
-                        <li class="sub-menu__item"><a href="shop2.html" class="menu-link menu-link_us-s">New Arrivals</a>
-                        </li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Dresses</a></li>
-                        <li class="sub-menu__item"><a href="shop3.html" class="menu-link menu-link_us-s">Accessories</a>
-                        </li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Footwear</a></li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Sweatshirt</a></li>
-                      </ul>
-                    </div>
-  
-                    <div class="search-result row row-cols-5"></div>
+                    <ul id="box-content-search">
+                    </ul>
                   </div>
                 </form>
               </div>
@@ -519,13 +536,13 @@
                 <img src="{{ asset('assets/images/logo.png') }}" alt="SurfsideMedia" class="logo__image d-block" />
               </a>
             </div>
-            <p class="footer-address">123 Beach Avenue, Surfside City, CA 00000</p>
-            <p class="m-0"><strong class="fw-medium">contact@surfsidemedia.in</strong></p>
-            <p><strong class="fw-medium">+1 000-000-0000</strong></p>
+            <p class="footer-address">Dunggoan, Danao City, Cebu, Philippines 60004</p>
+            <p class="m-0"><strong class="fw-medium">Contact@email.com</strong></p>
+            <p><strong class="fw-medium">Mobile NO.</strong></p>
   
             <ul class="social-links list-unstyled d-flex flex-wrap mb-0">
               <li>
-                <a href="#" class="footer__social-link d-block">
+                <a href="javascript:void(0)" class="footer__social-link d-block">
                   <svg class="svg-icon svg-icon_facebook" width="9" height="15" viewBox="0 0 9 15"
                     xmlns="http://www.w3.org/2000/svg">
                     <use href="#icon_facebook" />
@@ -533,7 +550,7 @@
                 </a>
               </li>
               <li>
-                <a href="#" class="footer__social-link d-block">
+                <a href="javascript:void(0)" class="footer__social-link d-block">
                   <svg class="svg-icon svg-icon_twitter" width="14" height="13" viewBox="0 0 14 13"
                     xmlns="http://www.w3.org/2000/svg">
                     <use href="#icon_twitter" />
@@ -541,7 +558,7 @@
                 </a>
               </li>
               <li>
-                <a href="#" class="footer__social-link d-block">
+                <a href="javascript:void(0)" class="footer__social-link d-block">
                   <svg class="svg-icon svg-icon_instagram" width="14" height="13" viewBox="0 0 14 13"
                     xmlns="http://www.w3.org/2000/svg">
                     <use href="#icon_instagram" />
@@ -549,7 +566,7 @@
                 </a>
               </li>
               <li>
-                <a href="#" class="footer__social-link d-block">
+                <a href="javascript:void(0)" class="footer__social-link d-block">
                   <svg class="svg-icon svg-icon_youtube" width="16" height="11" viewBox="0 0 16 11"
                     xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -558,7 +575,7 @@
                 </a>
               </li>
               <li>
-                <a href="#" class="footer__social-link d-block">
+                <a href="javascript:void(0)" class="footer__social-link d-block">
                   <svg class="svg-icon svg-icon_pinterest" width="14" height="15" viewBox="0 0 14 15"
                     xmlns="http://www.w3.org/2000/svg">
                     <use href="#icon_pinterest" />
@@ -571,46 +588,8 @@
           <div class="footer-column footer-menu mb-4 mb-lg-0">
             <h6 class="sub-menu__title text-uppercase">Company</h6>
             <ul class="sub-menu__list list-unstyled">
-              <li class="sub-menu__item"><a href="about-2.html" class="menu-link menu-link_us-s">About Us</a></li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Careers</a></li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Affiliates</a></li>
-              <li class="sub-menu__item"><a href="blog_list1.html" class="menu-link menu-link_us-s">Blog</a></li>
-              <li class="sub-menu__item"><a href="contact-2.html" class="menu-link menu-link_us-s">Contact Us</a></li>
-            </ul>
-          </div>
-  
-          <div class="footer-column footer-menu mb-4 mb-lg-0">
-            <h6 class="sub-menu__title text-uppercase">Shop</h6>
-            <ul class="sub-menu__list list-unstyled">
-              <li class="sub-menu__item"><a href="shop2.html" class="menu-link menu-link_us-s">New Arrivals</a></li>
-              <li class="sub-menu__item"><a href="shop3.html" class="menu-link menu-link_us-s">Accessories</a></li>
-              <li class="sub-menu__item"><a href="shop4.html" class="menu-link menu-link_us-s">Men</a></li>
-              <li class="sub-menu__item"><a href="shop5.html" class="menu-link menu-link_us-s">Women</a></li>
-              <li class="sub-menu__item"><a href="shop1.html" class="menu-link menu-link_us-s">Shop All</a></li>
-            </ul>
-          </div>
-  
-          <div class="footer-column footer-menu mb-4 mb-lg-0">
-            <h6 class="sub-menu__title text-uppercase">Help</h6>
-            <ul class="sub-menu__list list-unstyled">
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Customer Service</a></li>
-              <li class="sub-menu__item"><a href="account_dashboard.html" class="menu-link menu-link_us-s">My Account</a>
-              </li>
-              <li class="sub-menu__item"><a href="store_location.html" class="menu-link menu-link_us-s">Find a Store</a>
-              </li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Legal & Privacy</a></li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Gift Card</a></li>
-            </ul>
-          </div>
-  
-          <div class="footer-column footer-menu mb-4 mb-lg-0">
-            <h6 class="sub-menu__title text-uppercase">Categories</h6>
-            <ul class="sub-menu__list list-unstyled">
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Shirts</a></li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Jeans</a></li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Shoes</a></li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Bags</a></li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Shop All</a></li>
+              <li class="sub-menu__item"><a href="javascript:void(0)" class="menu-link menu-link_us-s">About Us</a></li>
+              <li class="sub-menu__item"><a href="{{route('home.contact')}}" class="menu-link menu-link_us-s">Contact Us</a></li>
             </ul>
           </div>
         </div>
@@ -618,7 +597,7 @@
   
       <div class="footer-bottom">
         <div class="container d-md-flex align-items-center">
-          <span class="footer-copyright me-auto">©2024 Surfside Media</span>
+          <span class="footer-copyright me-auto">©2025 </span>
           <div class="footer-settings d-md-flex align-items-center">
             <a href="privacy-policy.html">Privacy Policy</a> &nbsp;|&nbsp; <a href="terms-conditions.html">Terms &amp;
               Conditions</a>
@@ -671,8 +650,54 @@
     <script src="{{ asset('assets/js/plugins/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/bootstrap-slider.min.js') }}"></script>
+    <script src="{{ asset('js/sweetalert.min.js') }}"></script>  
     <script src="{{ asset('assets/js/plugins/swiper.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/countdown.js') }}"></script>
+    <script>
+      $(function(){
+        $("#search-input").on("keyup", function(){
+          var searchQuery = $(this).val();
+          if(searchQuery.length > 2)
+        {
+          $.ajax({
+            type: "GET",
+            url: "{{ route('home.search') }}",
+            data: {query: searchQuery},
+            dataType: 'json',
+            success: function(data){
+              $("#box-content-search").html(''),
+              $.each(data,function(index,item){
+                var url = "{{route('shop.product.details', ['product_slug'=>'product_slug_pls'])}}";
+                var link = url.replace('product_slug_pls',item.slug);
+
+                $("#box-content-search").append(`
+                <li>
+                  <ul>
+                    <li class="product-item gap14 mb-10">
+                      <div class="image no-bg">
+                        <img src="{{asset('uploads/products/thumbnails')}}/${item.image}" alt="${item.name}">
+                      </div>
+                      <div class="flex item-center justify-between gap20 flex-grow">
+                        <div class="name">
+                          <a href="${link}" class="body-text"> ${item.name}
+                          </a>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="mb-10">
+                      <div class="divider">
+                      </div>
+                    </li>
+                  </ul>
+                </li>
+                `);
+              });
+            }
+          });
+        }
+        });
+      });
+    </script>
     <script src="{{ asset('assets/js/theme.js') }}"></script>
     @stack("scripts")
   </body>

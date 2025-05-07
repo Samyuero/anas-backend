@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Slide;
 use Illuminate\Http\Request;
 
 class ShopController extends Controller
@@ -54,7 +55,9 @@ class ShopController extends Controller
                 
         })
             ->orderBy($o_column, $o_order)->paginate($size);
-        return view('shop', compact('products', 'size', 'order', 'brands', 'f_brands', 'categories', 'f_categories', 'min_price', 'max_price'));
+        
+        $slides = Slide::where('status', 1)->get()->take(3);
+        return view('shop', compact('products', 'size', 'order', 'brands', 'f_brands', 'categories', 'f_categories', 'min_price', 'max_price', 'slides'));
     }
 
     public function productDetails($product_slug)

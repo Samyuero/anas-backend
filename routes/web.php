@@ -30,9 +30,21 @@ Route::delete('/wishlist/remove/{rowId}', [WishlistController::class, 'removeFro
 Route::delete('/wishlist/clear', [WishlistController::class, 'clearWishlist'])->name('wishlist.item.clear');
 Route::post('/wishlist/move-to-cart/{rowId}', [WishlistController::class, 'moveToCart'])->name('wishlist.move.to.cart');
 
+
+Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::post('/place-order', [CartController::class, 'placeOrder'])->name('cart.place.order');
+Route::get('/order-confirmation', [CartController::class, 'orderConfirmation'])->name('cart.order.confirmation');
+
+Route::get('contact-us', [HomeController::class, 'contact'])->name('home.contact');
+Route::post('/contact/store', [HomeController::class, 'storeContact'])->name('home.contact.store');
+
+Route::get('/search', [HomeController::class, 'searchProduct'])->name('home.search');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/account-dashboard', [UserController::class, 'index'])->name('user.index');
-
+    Route::get('/account-orders', [UserController::class, 'orders'])->name('user.orders');
+    Route::get('/account-orders/{order_id}/details', [UserController::class, 'orderDetails'])->name('user.order.details');
+    Route::put('/account-order/cancel-order', [UserController::class, 'orderCancel'])->name('user.order.cancel');
 });
 
 Route::middleware(['auth', AuthAdmin::class])->group(function () {
@@ -57,4 +69,20 @@ Route::middleware(['auth', AuthAdmin::class])->group(function () {
     Route::get('/admin/products/{id}/edit', [AdminController::class, 'editProduct'])->name('admin.products.edit');
     Route::put('/admin/products/update', [AdminController::class, 'updateProduct'])->name('admin.products.update');
     Route::delete('/admin/products/{id}/delete', [AdminController::class, 'deleteProduct'])->name('admin.products.delete');
+
+    Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
+    Route::get('/admin/order/{order_id}/details', [AdminController::class, 'orderDetails'])->name('admin.order.details');
+    Route::put('/admin/orders/update-status', [AdminController::class, 'updateOrderStatus'])->name('admin.order.status.update');
+
+    Route::get('/admin/slides', [AdminController::class, 'slides'])->name('admin.slides');
+    Route::get('/admin/slides/add', [AdminController::class, 'addSlides'])->name('admin.add.slides');
+    Route::post('/admin/slide/store', [AdminController::class, 'storeSlides'])->name('admin.add.store');
+    Route::get('/admin/slide/{id}/edit', [AdminController::class, 'editSlide'])->name('admin.edit.slides');
+    Route::put('/admin/slide/update', [AdminController::class, 'updateSlide'])->name('admin.update.slides');
+    Route::delete('/admin/slide/{id}/delete', [AdminController::class, 'deleteSlides'])->name('admin.delete.slides');
+
+    Route::get('/admin/contacts', [AdminController::class, 'contacts'])->name('admin.contacts');
+    Route::delete('admin/contact/{id}/delete', [AdminController::class, 'deleteContact'])->name('admin.contact.delete');
+
+    Route::get('/admin/search', [Admincontroller::class, 'search'])->name('admin.search');
 });
