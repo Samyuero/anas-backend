@@ -23,6 +23,7 @@ Route::put('/cart/increase/{rowId}', [CartController::class, 'increaseCartItem']
 Route::put('/cart/decrease/{rowId}', [CartController::class, 'decreaseCartItem'])->name('cart.qty.decrease');
 Route::delete('/cart/remove/{rowId}', [CartController::class, 'removeCartItem'])->name('cart.item.remove');
 Route::delete('/cart/clear', [CartController::class, 'clearCart'])->name('cart.item.clear');
+Route::put('/cart/{rowId}/update', [CartController::class, 'updateQty'])->name('cart.qty.update');
 
 Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
 Route::post('/wishlist/add', [WishlistController::class, 'addToWishlist'])->name('wishlist.add');

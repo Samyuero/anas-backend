@@ -60,20 +60,20 @@
                     <span class="shopping-cart__product-price" id="unitPrice">{{$item->price}}</span>
                     </td>
                     <td>
-                    <div class="qty-control position-relative">
-                        <input type="number" name="quantity" id="" value="{{$item->qty}}" min="1" class="qty-control__number text-center">
-                        <form action="{{route('cart.qty.decrease', ['rowId' =>$item->rowId])}}" method="post">
-                            @csrf
-                            @method('PUT')
-                            <div class="qty-control__reduce">-</div>
-                        </form>
+                      <div class="qty-control position-relative">
+                          <input type="number" name="quantity" id="" value="{{$item->qty}}" min="1" class="qty-control__number text-center">
+                          <form action="{{route('cart.qty.decrease', ['rowId' =>$item->rowId])}}" method="post">
+                              @csrf
+                              @method('PUT')
+                              <div class="qty-control__reduce">-</div>
+                          </form>
 
-                        <form action="{{route('cart.qty.increase', ['rowId' =>$item->rowId])}}" method="post">
-                            @csrf
-                            @method('PUT')
-                            <div class="qty-control__increase">+</div>
-                        </form>
-                    </div>
+                          <form action="{{route('cart.qty.increase', ['rowId' =>$item->rowId])}}" method="post">
+                              @csrf
+                              @method('PUT')
+                              <div class="qty-control__increase">+</div>
+                          </form>
+                      </div>
                     </td>
                     <td>
                     <span class="shopping-cart__subtotal">₱{{Cart::instance('cart')->subTotal()}}</span>

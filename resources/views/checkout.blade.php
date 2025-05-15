@@ -153,15 +153,19 @@
                   </tbody>
                 </table>
               </div>
+              <label for="payment_method"><h4>Payment Method</h4></label>
               <div class="checkout__payment-methods">
                 <div class="form-check">
-                  <input class="form-check-input form-check-input_fill" autoselect="true" type="radio" name="payment_method" id="cod" value="cod">
+                  <input class="form-check-input form-check-input_fill" autoselect="true" type="radio" name="payment_method" id="cod" value="cod" required>
                   <label class="form-check-label" for="cod">
                     Cash on delivery
                   </label>
                 </div>
+                @error('payment_method')
+                  <span class="text-danger">{{ $message }}</span>
+                @enderror
               </div>
-              <button class="btn btn-primary btn-checkout">PLACE ORDER</button>
+              <button class="btn btn-primary">PLACE ORDER</button>
             </div>
           </div>
         </div>

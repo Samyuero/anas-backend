@@ -17,7 +17,7 @@ class CartController extends Controller
     public function index()
     {
         $items = Cart::instance('cart')->content();
-        return view('cart', compact('items', 'products'));
+        return view('cart', compact('items'));
     }
 
     public function addToCart(Request $request)
@@ -66,6 +66,13 @@ class CartController extends Controller
 
     public function placeOrder(Request $request)
     {
+        $validatedData = $request->validate([
+            'payment_method' => 'required|in:cod',
+        ], [
+            'payment_method.required' => 'Please select a payment method.',
+            'payment_method.in' => 'The selected payment method is invalid.',
+        ]);
+
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
         $user_mobile = Auth::user()->mobile;
@@ -108,13 +115,7 @@ class CartController extends Controller
         $order->barangay = $address->barangay;
         $order->sitio = $address->sitio;
         $order->landmark = $address->landmark;
-        $order->save();
-
-        $transaction = new Transaction();
-
-        $transaction->payment_method = 'cod';
-
-        
+        $order->save();        
 
         foreach(Cart::instance('cart')->content() as $item)
         {
@@ -124,17 +125,16 @@ class CartController extends Controller
             $orderItem->price = $item->price;
             $orderItem->quantity = $item->qty;
             $orderItem->save();
-        }
 
-        if($request->payment_method == 'cod')
-        {
+            Product::where('id', $item->id)->decrement('quantity', $item->qty);
+        }
+                
             $transaction = new Transaction();
             $transaction->user_id = $user_id;
             $transaction->order_id = $order->id;
-            $transaction->payment_method = $request->payment_method;
+            $transaction->payment_method = $validatedData['payment_method'];
             $transaction->status = 'pending';
             $transaction->save();
-        }
         
         Cart::instance('cart')->destroy();
         Session::forget('checkout');
@@ -154,8 +154,8 @@ class CartController extends Controller
         else
         {
             Session::put('checkout', [
-                'subTotal' => Cart::instance('cart')->subTotal(),
-                'total' => Cart::instance('cart')->total()
+                'subTotal' => (float) str_replace(',', '', Cart::instance('cart')->subTotal()),
+                'total' => (float) str_replace(',', '', Cart::instance('cart')->total())
             ]);
         }
     }
