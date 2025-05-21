@@ -42,6 +42,15 @@ class CartController extends Controller
         return redirect()->back();
     }
 
+    public function updateQty(Request $request, $rowId)
+    {
+        $validated = $request->validate([
+            'quantity' => 'required|integer|min:1'
+        ]);
+        Cart::instance('cart')->update($rowId, $validated['quantity']);
+        return redirect()->back();
+    }
+
     public function removeCartItem($rowId)
     {
         Cart::instance('cart')->remove($rowId);

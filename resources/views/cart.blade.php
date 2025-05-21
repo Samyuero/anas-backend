@@ -61,7 +61,11 @@
                     </td>
                     <td>
                       <div class="qty-control position-relative">
-                          <input type="number" name="quantity" id="" value="{{$item->qty}}" min="1" class="qty-control__number text-center">
+                        <form action=" {{ route('cart.qty.update', ['rowId' =>$item->rowId])}}" method="post">
+                          @csrf
+                          @method('PUT')
+                            <input type="number" name="quantity" id="quantity" value="{{$item->qty}}" min="1" class="qty-control__number text-center">
+                          </form>
                           <form action="{{route('cart.qty.decrease', ['rowId' =>$item->rowId])}}" method="post">
                               @csrf
                               @method('PUT')
@@ -150,6 +154,10 @@
     <script>
         $(function(){
             $('.qty-control__increase').on('click', function(){
+                $(this).closest('form').submit();
+            });
+
+            $('#quantity').on('change', function(){
                 $(this).closest('form').submit();
             });
 
