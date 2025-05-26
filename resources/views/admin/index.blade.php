@@ -128,9 +128,7 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-
             </div>
 
             <div class="wg-box">
@@ -185,10 +183,47 @@
                 </div>
                 <div id="line-chart-8"></div>
             </div>
-
         </div>
-        <div class="tf-section mb-30">
 
+        @if($lowStockProducts->isNotEmpty())
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h3 class="card-title">Low Stock Products (≤200 units)</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>SKU</th>
+                                <th>Current Stock</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($lowStockProducts as $product)
+                            <tr>
+                                <td>{{ $product->name }}</td>
+                                <td>{{ $product->SKU }}</td>
+                                <td class="{{ $product->quantity < 50 ? 'text-danger' : 'text-warning' }}">
+                                    {{ $product->quantity }}
+                                </td>
+                                <td>
+                                    @if($product->quantity == 0)
+                                        <span class="badge bg-danger">Out Of Stock</span>
+                                    @elseif($product->quantity <= 100)
+                                        <span class="badge bg-warning">Low Stock</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        @endif
+
+        <div class="tf-section mb-30">
             <div class="wg-box">
                 <div class="flex items-center justify-between">
                     <h5>Recent orders</h5>

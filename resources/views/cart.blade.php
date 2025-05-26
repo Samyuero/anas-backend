@@ -30,6 +30,11 @@
       <div class="shopping-cart">
         @if($items->count() > 0)
         <div class="cart-table__wrapper">
+          @if(Session::has('error'))
+                <div class="alert alert-danger  alert-dismissable fade show" role="alert">
+                    {{Session::get('error')}}
+                </div>
+            @endif
           <table class="cart-table">
             <thead>
               <tr>
@@ -99,6 +104,7 @@
             </tbody>
           </table>
           <div class="cart-table-footer">
+             
             
             <form action="{{route('cart.item.clear')}}" method="post">
                 @csrf

@@ -223,7 +223,11 @@
             </div>
           </div>
         </div>
-
+        @if(Session::has('error'))
+                    <div class="alert alert-danger  alert-dismissable fade show" role="alert">
+                        {{Session::get('error')}}
+                    </div>
+                  @endif
         <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
           @foreach ($products as $product)
             <div class="product-card-wrapper">

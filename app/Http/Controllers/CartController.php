@@ -22,15 +22,35 @@ class CartController extends Controller
 
     public function addToCart(Request $request)
     {
+        $product = Product::findOrFail($request->id);
+    
+        // Get total quantity of this product in the cart
+        $cartQuantity = Cart::instance('cart')->content()
+            ->where('id', $product->id)
+            ->sum('qty');
+
+        $requestedQuantity = $request->quantity;
+        $availableQuantity = $product->quantity;
+
+        if (($cartQuantity + $requestedQuantity) > $availableQuantity) {
+            return redirect()->back()
+                ->with('error', "Not enough stock for {$product->name}. Available: {$availableQuantity}");
+        }
         Cart::instance('cart')->add($request->id, $request->name, $request->quantity, $request->price)->associate('App\Models\Product');
         return redirect()->back();
     }
 
     public function increaseCartItem($rowId)
     {
-        $product = Cart::instance('cart')->get($rowId);
-        $qty = $product->qty + 1;
-        Cart::instance('cart')->update($rowId, $qty);
+        $cartItem = Cart::instance('cart')->get($rowId);
+        $product = Product::findOrFail($cartItem->id);
+
+        if ($cartItem->qty + 1 > $product->quantity) {
+            return redirect()->back()
+                ->with('error', "Cannot increase quantity. Only {$product->quantity} available for {$product->name}");
+        }
+
+        Cart::instance('cart')->update($rowId, $cartItem->qty + 1);
         return redirect()->back();
     }
 
@@ -45,8 +65,17 @@ class CartController extends Controller
     public function updateQty(Request $request, $rowId)
     {
         $validated = $request->validate([
-            'quantity' => 'required|integer|min:1'
+        'quantity' => 'required|integer|min:1'
         ]);
+
+        $cartItem = Cart::instance('cart')->get($rowId);
+        $product = Product::findOrFail($cartItem->id);
+
+        if ($validated['quantity'] > $product->quantity) {
+            return redirect()->back()
+                ->with('error', "Requested quantity exceeds available stock ({$product->quantity}) for {$product->name}");
+        }
+
         Cart::instance('cart')->update($rowId, $validated['quantity']);
         return redirect()->back();
     }

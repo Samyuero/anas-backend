@@ -52,12 +52,16 @@ class AdminController extends Controller
         $deliveredAmount = implode(',', collect($monthlyDatas)->pluck('TotalDeliveredAmount')->toArray());
         $cancelledAmount = implode(',', collect($monthlyDatas)->pluck('TotalCancelledAmount')->toArray());
 
-        $totalAmount = collect($monthlyDatas)->sum('TotalAmount');
-        $totalOrderedAmount = collect($monthlyDatas)->sum('TotalOrderedAmount');
-        $totalCancelledAmount = collect($monthlyDatas)->sum('TotalCancelledAmount');
-        $totalDeliveredAmount = collect($monthlyDatas)->sum('TotalDeliveredAmount');
+        $totalAmount = collect($dashbordDatas)->sum('TotalAmount');
+        $totalOrderedAmount = collect($dashbordDatas)->sum('TotalOrderedAmount');
+        $totalCancelledAmount = collect($dashbordDatas)->sum('TotalCancelledAmount');
+        $totalDeliveredAmount = collect($dashbordDatas)->sum('TotalDeliveredAmount');
+
+        $lowStockProducts = Product::where('quantity', '<=', 200)
+        ->orderBy('quantity', 'asc')
+        ->get();
         
-        return view('admin.index', compact('orders','dashbordDatas', 'monthlyDatas', 'AmountM', 'orderedAmount', 'deliveredAmount', 'cancelledAmount', 'totalAmount', 'totalOrderedAmount', 'totalCancelledAmount', 'totalDeliveredAmount'));
+        return view('admin.index', compact('orders','dashbordDatas', 'monthlyDatas', 'AmountM', 'orderedAmount', 'deliveredAmount', 'cancelledAmount', 'totalAmount', 'totalOrderedAmount', 'totalCancelledAmount', 'totalDeliveredAmount', 'lowStockProducts'));
     }
     public function brands()
     {
