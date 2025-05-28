@@ -129,6 +129,25 @@
                                         </li>
                                     </ul>
                                 </li>
+
+                                {{-- <li class="menu-item has-children">
+                                    <a href="javascript:void(0);" class="menu-item-button">
+                                        <div class="icon"><i class="icon-layers"></i></div>
+                                        <div class="text">Slides</div>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        <li class="sub-menu-item">
+                                            <a href="{{route('admin.categories.create')}}" class="">
+                                                <div class="text">Brand Slides</div>
+                                            </a>
+                                        </li>
+                                        <li class="sub-menu-item">
+                                            <a href="{{route('admin.categories')}}" class="">
+                                                <div class="text">Categories Slides</div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li> --}}
                                 <li class="menu-item">
                                     <a href="{{route('admin.slides')}}" class="">
                                         <div class="icon"><i class="icon-image"></i></div>
@@ -142,9 +161,9 @@
                                     </a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="users.html" class="">
+                                    <a href="#" class="">
                                         <div class="icon"><i class="icon-user"></i></div>
-                                        <div class="text">User</div>
+                                        <div class="text">Employees</div>
                                     </a>
                                 </li>
 

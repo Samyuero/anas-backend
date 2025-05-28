@@ -10,6 +10,7 @@ use App\Models\Address;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\User;
 use App\Models\Transaction;
 
 class CartController extends Controller
@@ -100,6 +101,35 @@ class CartController extends Controller
         }
         $address = Address::where('user_id', Auth::user()->id)->where('isDefault', 1)->first();
         return view('checkout', compact('address'));
+    }
+
+    public function editAddress()
+    {
+        if(!Auth::check())
+        {
+            return redirect()->route('login');
+        }
+        $address = Address::where('user_id', Auth::user()->id)->first();
+        return view('edit-address', compact('address'));
+    }
+    public function updateAddress(Request $request)
+    {
+        $request->validate([
+            'city' => '',
+            'barangay' => '',
+            'sitio' => '',
+            'landmark' => ''
+        ]);     
+
+        $user_id = Auth::user()->id;
+        $address = Address::where('user_id', $user_id);
+        $address->city = $request->city;
+        $address->barangay = $request->barangay;
+        $address->sitio = $request->sitio;
+        $address->landmark = $request->landmark;
+        $address->update();
+
+        return redirect()->back()->with('success', 'Address updated successfully.');
     }
 
     public function placeOrder(Request $request)

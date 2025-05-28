@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Transaction;
@@ -47,5 +48,55 @@ class UserController extends Controller
         $order->save();
 
         return redirect()->back()->with('status', "Order Cancelled Successfully!");
+    }
+
+    public function accountDetails()
+    {
+        return view('user.account-details', ['user' => Auth::user()]);
+    }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|unique:email,'.$request->id,
+            'mobile' => 'nullable|digits:11|unique:mobile,',
+        ]);
+
+        $user = User::find($request->id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->mobile = $request->mobile;
+
+        $user->update();
+
+        return redirect()->back()->with('success', 'Profile updated successfully!');
+    }
+
+    public function showChangePasswordForm()
+    {
+
+        $user = User::find(Auth::user()->id);
+        return view('user.change-password', compact('user'));
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::find(Auth::user()->id);
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect']);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+
+        return redirect()->back()->with('success', 'Password changed successfully!');
     }
 }

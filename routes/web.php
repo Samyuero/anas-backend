@@ -37,6 +37,7 @@ Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkou
 Route::post('/place-order', [CartController::class, 'placeOrder'])->name('cart.place.order');
 Route::get('/order-confirmation', [CartController::class, 'orderConfirmation'])->name('cart.order.confirmation');
 
+
 Route::get('contact-us', [HomeController::class, 'contact'])->name('home.contact');
 Route::post('/contact/store', [HomeController::class, 'storeContact'])->name('home.contact.store');
 
@@ -47,6 +48,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/account-orders', [UserController::class, 'orders'])->name('user.orders');
     Route::get('/account-orders/{order_id}/details', [UserController::class, 'orderDetails'])->name('user.order.details');
     Route::put('/account-order/cancel-order', [UserController::class, 'orderCancel'])->name('user.order.cancel');
+    Route::get('/account-details', [UserController::class, 'accountDetails'])->name('user.account.details');
+    Route::put('/account-details/update', [UserController::class, 'update'])->name('user.account.update');
+    Route::get('/account/change-password', [UserController::class, 'showChangePasswordForm'])->name('user.change.password');
+    Route::post('/account/change-password', [UserController::class, 'changePassword'])->name('user.password.update');
+    Route::get('/edit-address', [CartController::class, 'editAddress'])->name('cart.edit.address');
+    Route::put('/update-address', [CartController::class, 'updateAddress'])->name('cart.update.address');
 });
 
 Route::middleware(['auth', AuthAdmin::class])->group(function () {

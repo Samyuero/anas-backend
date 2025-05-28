@@ -135,7 +135,7 @@
       </div>
 
       <div class="shop-list flex-grow-1">
-        <div class="swiper-container js-swiper-slider slideshow slideshow_small slideshow_split" data-settings='{
+        {{-- <div class="swiper-container js-swiper-slider slideshow slideshow_small slideshow_split" data-settings='{
             "autoplay": {
               "delay": 5000
             },
@@ -172,18 +172,18 @@
           </div>
 
           <div class="container p-3 p-xl-5">
-            <div class="slideshow-pagination d-flex align-items-center position-absolute bottom-0 mb-4 pb-xl-2"></div>
-
+            <div class="slideshow-pagination d-flex align-items-center position-absolute bottom-0 mb-4 pb-xl-2">dsafsdfsdfsdf</div>
+              
           </div>
-        </div>
+        </div> --}}
 
         <div class="mb-3 pb-2 pb-xl-3"></div>
 
         <div class="d-flex justify-content-between mb-4 pb-md-2">
           <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1">
-            <a href="{{route('home.index')}}" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
+            <a href="javascript:void(0);" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
             <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
-            <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium">The Shop</a>
+            <a href="javascript:void(0);" class="menu-link menu-link_us-s text-uppercase fw-medium">The Shop</a>
           </div>
 
           <div class="shop-acs d-flex align-items-center justify-content-between justify-content-md-end flex-grow-1">
