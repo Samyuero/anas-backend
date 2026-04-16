@@ -597,7 +597,7 @@
   
       <div class="footer-bottom">
         <div class="container d-md-flex align-items-center">
-          <span class="footer-copyright me-auto">©2025 </span>
+          <span class="footer-copyright me-auto">©2026 </span>
           <div class="footer-settings d-md-flex align-items-center">
             <a href="privacy-policy.html">Privacy Policy</a> &nbsp;|&nbsp; <a href="terms-conditions.html">Terms &amp;
               Conditions</a>

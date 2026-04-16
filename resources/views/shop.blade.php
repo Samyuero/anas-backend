@@ -122,11 +122,11 @@
               <div class="price-range__info d-flex align-items-center mt-2">
                 <div class="me-auto">
                   <span class="text-secondary">Min Price: </span>
-                  <span class="price-range__min">$1</span>
+                  <span class="price-range__min">₱1</span>
                 </div>
                 <div>
                   <span class="text-secondary">Max Price: </span>
-                  <span class="price-range__max">$500</span>
+                  <span class="price-range__max">₱500</span>
                 </div>
               </div>
             </div>

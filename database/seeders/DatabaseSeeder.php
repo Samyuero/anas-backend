@@ -16,6 +16,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             MonthSeeder::class
         ]);
+
+        $this->call([
+            AdminUserSeeder::class
+        ]);
         // User::factory(10)->create();
 
         // User::factory()->create([

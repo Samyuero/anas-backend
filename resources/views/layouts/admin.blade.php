@@ -40,7 +40,7 @@
                 <div class="section-menu-left">
                     <div class="box-logo" style="width: ">
                         <a href="{{route('admin.index')}}" id="site-logo-inner">
-                            <img class="" id="logo_header_1" alt="" src="{{ asset('images/logo/logo.png') }}"
+                            <img id="logo_header_1" alt="StockEase Logo" src="{{ asset('images/logo/logo.png') }}"
                                 data-light="{{ asset('images/logo/logo.png') }}" data-dark="{{ asset('images/logo/logo.png') }}">
                         </a>
                         <div class="button-show-hide">
@@ -267,7 +267,7 @@
                         @yield('content')
 
                         <div class="bottom-page">
-                            <div class="body-text">Copyright © 2025</div>
+                            <div class="body-text">Copyright © 2026</div>
                         </div>
                     </div>
 

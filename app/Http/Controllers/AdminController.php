@@ -104,9 +104,9 @@ class AdminController extends Controller
     public function updateBrand(Request $request)
     {
         $request->validate([
-            'brandName' => 'required',
-            'slug' => 'required|unique:brands,slug',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'brandName' => '',
+            'slug' => 'unique:brands,slug',
+            'image' => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $brand = Brand::find($request->id);
@@ -206,8 +206,8 @@ class AdminController extends Controller
     public function updateCategory(Request $request)
     {
         $request->validate([
-            'categoryName' => 'required',
-            'slug' => 'required|unique:categories,slug',
+            'categoryName' => '',
+            'slug' => 'unique:categories,slug',
             'image' => 'mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -351,19 +351,19 @@ class AdminController extends Controller
     public function updateProduct(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => '',
             'slug' => 'unique:products,slug,' . $request->id,
-            'short_description' => 'required',
-            'description' => 'required',
-            'regular_price' => 'required',
-            'sale_price' => 'required',
-            'SKU' => 'required',
-            'stock_status' => 'required',
-            'featured' => 'required',
-            'quantity' => 'required',
+            'short_description' => '',
+            'description' => '',
+            'regular_price' => '',
+            'sale_price' => '',
+            'SKU' => '',
+            'stock_status' => '',
+            'featured' => '',
+            'quantity' => '',
             'image' => 'mimes:jpeg,png,jpg|max:2048',
-            'category_id' => 'required',
-            'brand_id' => 'required'
+            'category_id' => '',
+            'brand_id' => ''
         ]);
 
         $product = Product::find($request->id);
@@ -568,11 +568,11 @@ class AdminController extends Controller
     public function updateSlide(Request $request)
     {
         $request->validate([
-            'tagline' => 'required',
-            'title' => 'required',
-            'subTitle' => 'required',
-            'link' => 'required',
-            'status' => 'required',
+            'tagline' => '',
+            'title' => '',
+            'subTitle' => '',
+            'link' => '',
+            'status' => '',
             'image' => 'mimes:png,jpg,jpeg|max:2048'
         ]);
 
