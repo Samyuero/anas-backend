@@ -44,6 +44,31 @@ class HomeController extends Controller
         return redirect()->back()->with('success', 'Your Message has been sent Successfully.');
     }
 
+    /**
+     * Store contact message (API for React)
+     */
+    public function storeContactApi(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|max:100',
+            'email' => 'required|email',
+            'phone' => 'required',
+            'comment' => 'required'
+        ]);
+
+        $contact = new Contact();
+        $contact->name = $request->name;
+        $contact->email = $request->email;
+        $contact->phone = $request->phone;
+        $contact->comment = $request->comment;
+        $contact->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your message has been sent successfully.'
+        ]);
+    }
+
     public function searchProduct(Request $request)
     {
         $query = $request->input('query');
