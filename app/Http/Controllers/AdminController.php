@@ -232,6 +232,13 @@ class AdminController extends Controller
             $image = $request->file('image');
             $file_extension = $image->getClientOriginalExtension();
             $imageName = $current_timestamp . '.' . $file_extension;
+            
+            // Ensure directory exists
+            $dest = public_path('uploads/products');
+            if (!File::exists($dest)) {
+                File::makeDirectory($dest, 0755, true);
+            }
+            
             $this->generateProductsThumbnailsImage($image, $imageName);
             $product->image = $imageName;
         }
