@@ -42,7 +42,7 @@ class AdminController extends Controller
                                     sum(if(status='processing',1,0)) As TotalOrdered,
                                     sum(if(status='delivered',1,0)) As TotalDelivered,
                                     sum(if(status='cancelled',1,0)) As TotalCancelled
-                                    From Orders
+                                    From orders
                                     ");
 
         $monthlyDatas = DB::select("SELECT M.id As MonthNo, LEFT(M.name, 3) As MonthName,
@@ -56,7 +56,7 @@ class AdminController extends Controller
                                     sum(if(status='processing', subTotal,0)) As TotalOrderedAmount,
                                     sum(if(status='delivered', subTotal,0)) As TotalDeliveredAmount,
                                     sum(if(status='cancelled', subTotal,0)) As TotalCancelledAmount
-                                    From Orders WHERE YEAR(created_at) = YEAR(NOW()) GROUP BY YEAR(created_at), MONTH(created_at), DATE_FORMAT(created_at, '%b')
+                                    From orders WHERE YEAR(created_at) = YEAR(NOW()) GROUP BY YEAR(created_at), MONTH(created_at), DATE_FORMAT(created_at, '%b')
                                     Order By MONTH(created_at)) D On D.MonthNo=M.id");
 
         $stats = [
