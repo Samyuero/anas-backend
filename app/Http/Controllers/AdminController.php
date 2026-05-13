@@ -783,7 +783,7 @@ class AdminController extends Controller
 
     public function apiAccounts()
     {
-        $users = \App\Models\User::where('utype', 'ADM')
+        $users = \App\Models\User::orderByRaw("FIELD(utype, 'ADM', 'USR')")
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($u) {
