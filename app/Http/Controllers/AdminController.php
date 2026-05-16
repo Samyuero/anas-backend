@@ -230,29 +230,40 @@ class AdminController extends Controller
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $file_extension = $image->getClientOriginalExtension();
-            $imageName = $current_timestamp . '.' . $file_extension;
-            
-            // Ensure directory exists
-            $dest = public_path('uploads/products');
-            if (!File::exists($dest)) {
-                File::makeDirectory($dest, 0755, true);
+            if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
+                $product->image = $image->storeOnCloudinary('products')->getSecurePath();
+            } else {
+                $file_extension = $image->getClientOriginalExtension();
+                $imageName = $current_timestamp . '.' . $file_extension;
+                
+                // Ensure directory exists
+                $dest = public_path('uploads/products');
+                if (!File::exists($dest)) {
+                    File::makeDirectory($dest, 0755, true);
+                }
+                
+                $this->generateProductsThumbnailsImage($image, $imageName);
+                $product->image = $imageName;
             }
-            
-            $this->generateProductsThumbnailsImage($image, $imageName);
-            $product->image = $imageName;
         }
 
         $gallery_arr = array();
         if($request->hasFile('images')) {
             $files = $request->file('images');
-            $counter = 1;
-            foreach ($files as $file) {
-                $file_extension = $file->getClientOriginalExtension();
-                $gFileName = $current_timestamp . '-' . $counter . '.' . $file_extension;
-                $this->generateProductsThumbnailsImage($file, $gFileName);
-                array_push($gallery_arr, $gFileName);
-                $counter++;
+            if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
+                foreach ($files as $file) {
+                    $uploaded = $file->storeOnCloudinary('products/gallery');
+                    array_push($gallery_arr, $uploaded->getSecurePath());
+                }
+            } else {
+                $counter = 1;
+                foreach ($files as $file) {
+                    $file_extension = $file->getClientOriginalExtension();
+                    $gFileName = $current_timestamp . '-' . $counter . '.' . $file_extension;
+                    $this->generateProductsThumbnailsImage($file, $gFileName);
+                    array_push($gallery_arr, $gFileName);
+                    $counter++;
+                }
             }
             $product->images = implode(',', $gallery_arr);
         }
@@ -321,10 +332,14 @@ class AdminController extends Controller
         }
         
         $image = $request->file('image');
-        $file_extension = $image->getClientOriginalExtension();
-        $imageName = $current_timestamp . '.' . $file_extension;
-        $this->generateProductsThumbnailsImage($image, $imageName);
-        $product->image = $imageName;
+        if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
+            $product->image = $image->storeOnCloudinary('products')->getSecurePath();
+        } else {
+            $file_extension = $image->getClientOriginalExtension();
+            $imageName = $current_timestamp . '.' . $file_extension;
+            $this->generateProductsThumbnailsImage($image, $imageName);
+            $product->image = $imageName;
+        }
     }
 
     if($request->hasFile('images')) {
@@ -341,13 +356,20 @@ class AdminController extends Controller
 
         $gallery_arr = array();
         $files = $request->file('images');
-        $counter = 1;
-        foreach ($files as $file) {
-            $file_extension = $file->getClientOriginalExtension();
-            $gFileName = $current_timestamp . '-' . $counter . '.' . $file_extension;
-            $this->generateProductsThumbnailsImage($file, $gFileName);
-            array_push($gallery_arr, $gFileName);
-            $counter++;
+        if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
+            foreach ($files as $file) {
+                $uploaded = $file->storeOnCloudinary('products/gallery');
+                array_push($gallery_arr, $uploaded->getSecurePath());
+            }
+        } else {
+            $counter = 1;
+            foreach ($files as $file) {
+                $file_extension = $file->getClientOriginalExtension();
+                $gFileName = $current_timestamp . '-' . $counter . '.' . $file_extension;
+                $this->generateProductsThumbnailsImage($file, $gFileName);
+                array_push($gallery_arr, $gFileName);
+                $counter++;
+            }
         }
         $product->images = implode(',', $gallery_arr);
     }
@@ -413,13 +435,17 @@ class AdminController extends Controller
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
-            $destinationPath = public_path('uploads/categories');
-            if (!File::exists($destinationPath)) {
-                File::makeDirectory($destinationPath, 0755, true);
+            if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
+                $category->image = $image->storeOnCloudinary('categories')->getSecurePath();
+            } else {
+                $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
+                $destinationPath = public_path('uploads/categories');
+                if (!File::exists($destinationPath)) {
+                    File::makeDirectory($destinationPath, 0755, true);
+                }
+                $image->move($destinationPath, $imageName);
+                $category->image = $imageName;
             }
-            $image->move($destinationPath, $imageName);
-            $category->image = $imageName;
         }
 
         $category->save();
@@ -443,13 +469,17 @@ class AdminController extends Controller
                 File::delete(public_path('uploads/categories/' . $category->image));
             }
             $image = $request->file('image');
-            $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
-            $destinationPath = public_path('uploads/categories');
-            if (!File::exists($destinationPath)) {
-                File::makeDirectory($destinationPath, 0755, true);
+            if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
+                $category->image = $image->storeOnCloudinary('categories')->getSecurePath();
+            } else {
+                $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
+                $destinationPath = public_path('uploads/categories');
+                if (!File::exists($destinationPath)) {
+                    File::makeDirectory($destinationPath, 0755, true);
+                }
+                $image->move($destinationPath, $imageName);
+                $category->image = $imageName;
             }
-            $image->move($destinationPath, $imageName);
-            $category->image = $imageName;
         }
 
         $category->save();
@@ -488,13 +518,17 @@ class AdminController extends Controller
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
-            $destinationPath = public_path('uploads/brands');
-            if (!File::exists($destinationPath)) {
-                File::makeDirectory($destinationPath, 0755, true);
+            if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
+                $brand->image = $image->storeOnCloudinary('brands')->getSecurePath();
+            } else {
+                $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
+                $destinationPath = public_path('uploads/brands');
+                if (!File::exists($destinationPath)) {
+                    File::makeDirectory($destinationPath, 0755, true);
+                }
+                $image->move($destinationPath, $imageName);
+                $brand->image = $imageName;
             }
-            $image->move($destinationPath, $imageName);
-            $brand->image = $imageName;
         }
 
         $brand->save();
@@ -518,13 +552,17 @@ class AdminController extends Controller
                 File::delete(public_path('uploads/brands/' . $brand->image));
             }
             $image = $request->file('image');
-            $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
-            $destinationPath = public_path('uploads/brands');
-            if (!File::exists($destinationPath)) {
-                File::makeDirectory($destinationPath, 0755, true);
+            if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
+                $brand->image = $image->storeOnCloudinary('brands')->getSecurePath();
+            } else {
+                $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
+                $destinationPath = public_path('uploads/brands');
+                if (!File::exists($destinationPath)) {
+                    File::makeDirectory($destinationPath, 0755, true);
+                }
+                $image->move($destinationPath, $imageName);
+                $brand->image = $imageName;
             }
-            $image->move($destinationPath, $imageName);
-            $brand->image = $imageName;
         }
 
         $brand->save();
@@ -548,7 +586,7 @@ class AdminController extends Controller
     public function apiSlides()
     {
         $slides = Slide::orderBy('created_at', 'desc')->get()->map(function($slide) {
-            $slide->image_url = $slide->image ? asset('uploads/slides/' . $slide->image) : null;
+            $slide->image_url = $slide->image ? (str_starts_with($slide->image, 'http') ? $slide->image : asset('uploads/slides/' . $slide->image)) : null;
             return $slide;
         });
         return response()->json(['success' => true, 'data' => $slides]);
@@ -573,13 +611,17 @@ class AdminController extends Controller
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
-            $destinationPath = public_path('uploads/slides');
-            if (!File::exists($destinationPath)) {
-                File::makeDirectory($destinationPath, 0755, true);
+            if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
+                $slide->image = $image->storeOnCloudinary('slides')->getSecurePath();
+            } else {
+                $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
+                $destinationPath = public_path('uploads/slides');
+                if (!File::exists($destinationPath)) {
+                    File::makeDirectory($destinationPath, 0755, true);
+                }
+                $image->move($destinationPath, $imageName);
+                $slide->image = $imageName;
             }
-            $image->move($destinationPath, $imageName);
-            $slide->image = $imageName;
         }
 
         $slide->save();
@@ -594,7 +636,7 @@ class AdminController extends Controller
     public function apiShowSlide($id)
     {
         $slide = Slide::findOrFail($id);
-        $slide->image_url = $slide->image ? asset('uploads/slides/' . $slide->image) : null;
+        $slide->image_url = $slide->image ? (str_starts_with($slide->image, 'http') ? $slide->image : asset('uploads/slides/' . $slide->image)) : null;
         return response()->json(['success' => true, 'data' => $slide]);
     }
 
@@ -614,13 +656,17 @@ class AdminController extends Controller
                 File::delete(public_path('uploads/slides/' . $slide->image));
             }
             $image = $request->file('image');
-            $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
-            $destinationPath = public_path('uploads/slides');
-            if (!File::exists($destinationPath)) {
-                File::makeDirectory($destinationPath, 0755, true);
+            if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
+                $slide->image = $image->storeOnCloudinary('slides')->getSecurePath();
+            } else {
+                $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
+                $destinationPath = public_path('uploads/slides');
+                if (!File::exists($destinationPath)) {
+                    File::makeDirectory($destinationPath, 0755, true);
+                }
+                $image->move($destinationPath, $imageName);
+                $slide->image = $imageName;
             }
-            $image->move($destinationPath, $imageName);
-            $slide->image = $imageName;
         }
 
         $slide->save();

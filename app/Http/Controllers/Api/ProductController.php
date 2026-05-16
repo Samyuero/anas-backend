@@ -73,7 +73,7 @@ class ProductController extends Controller
         // Transform image URLs and prices for frontend
         $products->getCollection()->transform(function ($product) {
             if ($product->image) {
-                $product->image = asset('uploads/products/' . $product->image);
+                $product->image = str_starts_with($product->image, 'http') ? $product->image : asset('uploads/products/' . $product->image);
             }
             
             $product->wholesale_price = $product->regular_price;
@@ -97,7 +97,7 @@ class ProductController extends Controller
         }
         
         // Transform image URL
-        $imageUrl = $product->image ? asset('uploads/products/' . $product->image) : null;
+        $imageUrl = $product->image ? (str_starts_with($product->image, 'http') ? $product->image : asset('uploads/products/' . $product->image)) : null;
         
         // Parse gallery images into array - check both gallery_images (JSON) and images (comma-separated) columns
         $galleryImages = [];
@@ -106,7 +106,7 @@ class ProductController extends Controller
         if ($product->gallery_images) {
             $galleryArray = json_decode($product->gallery_images, true) ?? [];
             foreach ($galleryArray as $img) {
-                $galleryImages[] = asset($img);
+                $galleryImages[] = str_starts_with($img, 'http') ? $img : asset($img);
             }
         }
         
@@ -115,7 +115,7 @@ class ProductController extends Controller
             $legacyImages = array_filter(array_map('trim', explode(',', $product->images)));
             foreach ($legacyImages as $img) {
                 if ($img && $img !== $product->image) {
-                    $galleryImages[] = asset('uploads/products/' . $img);
+                    $galleryImages[] = str_starts_with($img, 'http') ? $img : asset('uploads/products/' . $img);
                 }
             }
         }

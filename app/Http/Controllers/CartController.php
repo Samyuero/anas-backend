@@ -33,7 +33,7 @@ class CartController extends Controller
                 'qty' => $item->quantity,
                 'price' => (float) $item->price,
                 'subtotal' => round($item->price * $item->quantity, 2),
-                'image' => $item->product->image ? asset('uploads/products/' . $item->product->image) : null,
+                'image' => $item->product->image ? (str_starts_with($item->product->image, 'http') ? $item->product->image : asset('uploads/products/' . $item->product->image)) : null,
                 'category' => $item->product->category->categoryName ?? null,
                 'product' => $item->product,
             ];
