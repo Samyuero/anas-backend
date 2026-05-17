@@ -242,7 +242,7 @@ class AdminController extends Controller
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
-                    $product->image = $image->storeOnCloudinary('products')->getSecurePath();
+                    $product->image = $this->uploadToCloudinary($image, 'products');
                 } else {
                     $file_extension = $image->getClientOriginalExtension();
                     $imageName = $current_timestamp . '.' . $file_extension;
@@ -269,8 +269,7 @@ class AdminController extends Controller
             if ($files) {
                 if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
                     foreach ($files as $file) {
-                        $uploaded = $file->storeOnCloudinary('products/gallery');
-                        array_push($gallery_arr, $uploaded->getSecurePath());
+                        array_push($gallery_arr, $this->uploadToCloudinary($file, 'products/gallery'));
                     }
                 } else {
                     $counter = 1;
@@ -358,7 +357,7 @@ class AdminController extends Controller
                 
                 $image = $request->file('image');
                 if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
-                    $product->image = $image->storeOnCloudinary('products')->getSecurePath();
+                    $product->image = $this->uploadToCloudinary($image, 'products');
                 } else {
                     $file_extension = $image->getClientOriginalExtension();
                     $imageName = $current_timestamp . '.' . $file_extension;
@@ -383,8 +382,7 @@ class AdminController extends Controller
                 $files = $request->file('images');
                 if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
                     foreach ($files as $file) {
-                        $uploaded = $file->storeOnCloudinary('products/gallery');
-                        array_push($gallery_arr, $uploaded->getSecurePath());
+                        array_push($gallery_arr, $this->uploadToCloudinary($file, 'products/gallery'));
                     }
                 } else {
                     $counter = 1;
@@ -467,7 +465,7 @@ class AdminController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
-                $category->image = $image->storeOnCloudinary('categories')->getSecurePath();
+                $category->image = $this->uploadToCloudinary($image, 'categories');
             } else {
                 $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
                 $destinationPath = public_path('uploads/categories');
@@ -501,7 +499,7 @@ class AdminController extends Controller
             }
             $image = $request->file('image');
             if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
-                $category->image = $image->storeOnCloudinary('categories')->getSecurePath();
+                $category->image = $this->uploadToCloudinary($image, 'categories');
             } else {
                 $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
                 $destinationPath = public_path('uploads/categories');
@@ -550,7 +548,7 @@ class AdminController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
-                $brand->image = $image->storeOnCloudinary('brands')->getSecurePath();
+                $brand->image = $this->uploadToCloudinary($image, 'brands');
             } else {
                 $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
                 $destinationPath = public_path('uploads/brands');
@@ -584,7 +582,7 @@ class AdminController extends Controller
             }
             $image = $request->file('image');
             if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
-                $brand->image = $image->storeOnCloudinary('brands')->getSecurePath();
+                $brand->image = $this->uploadToCloudinary($image, 'brands');
             } else {
                 $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
                 $destinationPath = public_path('uploads/brands');
@@ -643,7 +641,7 @@ class AdminController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
-                $slide->image = $image->storeOnCloudinary('slides')->getSecurePath();
+                $slide->image = $this->uploadToCloudinary($image, 'slides');
             } else {
                 $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
                 $destinationPath = public_path('uploads/slides');
@@ -688,7 +686,7 @@ class AdminController extends Controller
             }
             $image = $request->file('image');
             if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
-                $slide->image = $image->storeOnCloudinary('slides')->getSecurePath();
+                $slide->image = $this->uploadToCloudinary($image, 'slides');
             } else {
                 $imageName = Carbon::now()->timestamp . '.' . $image->getClientOriginalExtension();
                 $destinationPath = public_path('uploads/slides');
@@ -715,6 +713,17 @@ class AdminController extends Controller
         return response()->json(['success' => true, 'message' => 'Slide deleted successfully']);
     }
     
+    private function uploadToCloudinary($file, $folder)
+    {
+        if (method_exists($file, 'storeOnCloudinary')) {
+            return $file->storeOnCloudinary($folder)->getSecurePath();
+        }
+        
+        return cloudinary()->upload($file->getRealPath(), [
+            'folder' => $folder
+        ])->getSecurePath();
+    }
+
     public function generateProductsThumbnailsImage($image, $imageName)
     {
         $destinationPath = public_path('uploads/products');
