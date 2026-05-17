@@ -113,7 +113,7 @@ const AddProduct = () => {
 
       // Append gallery images (optional)
       galleryImages.forEach((file) => {
-        data.append('gallery_images[]', file);
+        data.append('images[]', file);
       });
 
       const res = await fetch(`${API_URL}/admin/products`, {

@@ -208,6 +208,8 @@ class AdminController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'gallery_images' => 'nullable|array',
+            'gallery_images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'required|exists:brands,id'
         ]);
@@ -248,8 +250,14 @@ class AdminController extends Controller
         }
 
         $gallery_arr = array();
-        if($request->hasFile('images')) {
+        $files = null;
+        if ($request->hasFile('images')) {
             $files = $request->file('images');
+        } elseif ($request->hasFile('gallery_images')) {
+            $files = $request->file('gallery_images');
+        }
+
+        if ($files) {
             if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
                 foreach ($files as $file) {
                     $uploaded = $file->storeOnCloudinary('products/gallery');
