@@ -783,9 +783,14 @@ class AdminController extends Controller
 
         $image->move($destinationPath, $imageName);
         
-        $img = Image::read($destinationPath . '/' . $imageName);
-        $img->scaleDown(400, 400);
-        $img->save($thumbnailPath . '/' . $imageName);
+        try {
+            $img = Image::read($destinationPath . '/' . $imageName);
+            $img->scaleDown(400, 400);
+            $img->save($thumbnailPath . '/' . $imageName);
+        } catch (\Exception $e) {
+            // Fallback: If GD is missing or resizing fails, simply copy the moved file to the thumbnails folder directly
+            File::copy($destinationPath . '/' . $imageName, $thumbnailPath . '/' . $imageName);
+        }
     }
 
     /**
