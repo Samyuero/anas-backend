@@ -10,12 +10,20 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // Drop old columns if they exist
-            $table->dropColumn('name');
+            if (Schema::hasColumn('users', 'name')) {
+                $table->dropColumn('name');
+            }
             
-            // Add new columns
-            $table->string('first_name')->after('id');
-            $table->string('last_name')->after('first_name');
-            $table->string('mobile')->nullable()->after('email'); // ← ADD THIS
+            // Add new columns if they do not exist
+            if (!Schema::hasColumn('users', 'first_name')) {
+                $table->string('first_name')->after('id');
+            }
+            if (!Schema::hasColumn('users', 'last_name')) {
+                $table->string('last_name')->after('first_name');
+            }
+            if (!Schema::hasColumn('users', 'mobile')) {
+                $table->string('mobile')->nullable()->after('email');
+            }
         });
     }
 
