@@ -756,17 +756,14 @@ class AdminController extends Controller
     private function uploadToCloudinary($file, $folder)
     {
         $url = $this->getCloudinaryUrl();
-        if ($url) {
-            config(['cloudinary.cloud_url' => $url]);
-        }
-
-        if (method_exists($file, 'storeOnCloudinary')) {
-            return $file->storeOnCloudinary($folder)->getSecurePath();
-        }
         
-        return cloudinary()->upload($file->getRealPath(), [
+        // Instantiate the official Cloudinary PHP SDK directly to bypass singleton/container caching issues
+        $cloudinary = new \Cloudinary\Cloudinary($url);
+        $response = $cloudinary->uploadApi()->upload($file->getRealPath(), [
             'folder' => $folder
-        ])->getSecurePath();
+        ]);
+        
+        return $response['secure_url'];
     }
 
     public function generateProductsThumbnailsImage($image, $imageName)
