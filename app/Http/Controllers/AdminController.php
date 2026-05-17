@@ -294,7 +294,9 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create product: ' . $e->getMessage()
+                'message' => 'Failed to create product: ' . $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
             ], 500);
         }
     }
@@ -407,7 +409,9 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update product: ' . $e->getMessage()
+                'message' => 'Failed to update product: ' . $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
             ], 500);
         }
     }
@@ -713,15 +717,45 @@ class AdminController extends Controller
         return response()->json(['success' => true, 'message' => 'Slide deleted successfully']);
     }
     
+    private function getCloudinaryUrl()
+    {
+        $url = getenv('CLOUDINARY_URL') ?: ($_ENV['CLOUDINARY_URL'] ?? null);
+        
+        // Clean URL if it starts with CLOUDINARY_URL= or has quotes
+        if ($url) {
+            $url = trim($url, " \t\n\r\0\x0B\"'");
+            if (str_starts_with($url, 'CLOUDINARY_URL=')) {
+                $url = substr($url, 15);
+            }
+            $url = trim($url, " \t\n\r\0\x0B\"'");
+        }
+        
+        // If CLOUDINARY_URL is not set, try to build it from individual credentials
+        if (!$url) {
+            $key = getenv('CLOUDINARY_KEY') ?: ($_ENV['CLOUDINARY_KEY'] ?? null) ?: getenv('CLOUDINARY_API_KEY') ?: ($_ENV['CLOUDINARY_API_KEY'] ?? null);
+            $secret = getenv('CLOUDINARY_SECRET') ?: ($_ENV['CLOUDINARY_SECRET'] ?? null) ?: getenv('CLOUDINARY_API_SECRET') ?: ($_ENV['CLOUDINARY_API_SECRET'] ?? null);
+            $cloud = getenv('CLOUDINARY_CLOUD_NAME') ?: ($_ENV['CLOUDINARY_CLOUD_NAME'] ?? null);
+            
+            if ($key && $secret && $cloud) {
+                $key = trim($key, " \t\n\r\0\x0B\"'");
+                $secret = trim($secret, " \t\n\r\0\x0B\"'");
+                $cloud = trim($cloud, " \t\n\r\0\x0B\"'");
+                $url = "cloudinary://{$key}:{$secret}@{$cloud}";
+            }
+        }
+        
+        return $url ?: config('cloudinary.cloud_url');
+    }
+
     private function isCloudinaryEnabled()
     {
-        $url = getenv('CLOUDINARY_URL') ?: ($_ENV['CLOUDINARY_URL'] ?? null) ?: config('cloudinary.cloud_url');
-        return !empty($url);
+        $url = $this->getCloudinaryUrl();
+        return !empty($url) && $url !== 'cloudinary://:@';
     }
 
     private function uploadToCloudinary($file, $folder)
     {
-        $url = getenv('CLOUDINARY_URL') ?: ($_ENV['CLOUDINARY_URL'] ?? null) ?: config('cloudinary.cloud_url');
+        $url = $this->getCloudinaryUrl();
         if ($url) {
             config(['cloudinary.cloud_url' => $url]);
         }
