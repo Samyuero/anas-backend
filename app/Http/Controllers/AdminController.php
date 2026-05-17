@@ -19,6 +19,16 @@ use Intervention\Image\Laravel\Facades\Image;
 
 class AdminController extends Controller
 {
+    public function __construct()
+    {
+        // Auto-heal: Automatically execute all pending database migrations in production on any request
+        try {
+            \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        } catch (\Exception $e) {
+            // Silence migration errors if connection is not ready yet during boot
+        }
+    }
+
     // ============================================
     // WEB METHODS (for Blade views if needed)
     // ============================================
