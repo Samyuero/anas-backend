@@ -194,95 +194,110 @@ class AdminController extends Controller
 
     public function apiStoreProduct(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:100',
-            'slug' => 'required|unique:products,slug',
-            'short_description' => 'required|string',
-            'description' => 'required|string',
-            'regular_price' => 'required|numeric|min:0',
-            'sale_price' => 'required|numeric|min:0',
-            'SKU' => 'required|unique:products,SKU',
-            'stock_status' => 'required|in:inStock,outOfStock',
-            'featured' => 'required|in:0,1',
-            'quantity' => 'required|integer|min:0',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
-            'gallery_images' => 'nullable|array',
-            'gallery_images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
-            'category_id' => 'required|exists:categories,id',
-            'brand_id' => 'required|exists:brands,id'
-        ]);
-
-        $product = new Product();
-        $product->name = $request->name;
-        $product->slug = $request->slug;
-        $product->short_description = $request->short_description;
-        $product->description = $request->description;
-        $product->regular_price = $request->regular_price;
-        $product->sale_price = $request->sale_price;
-        $product->SKU = $request->SKU;
-        $product->stock_status = $request->stock_status;
-        $product->featured = $request->featured == '1' ? 1 : 0;
-        $product->quantity = $request->quantity;
-        $product->category_id = $request->category_id;
-        $product->brand_id = $request->brand_id;
-
-        $current_timestamp = Carbon::now()->timestamp;
-
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
-                $product->image = $image->storeOnCloudinary('products')->getSecurePath();
-            } else {
-                $file_extension = $image->getClientOriginalExtension();
-                $imageName = $current_timestamp . '.' . $file_extension;
-                
-                // Ensure directory exists
-                $dest = public_path('uploads/products');
-                if (!File::exists($dest)) {
-                    File::makeDirectory($dest, 0755, true);
-                }
-                
-                $this->generateProductsThumbnailsImage($image, $imageName);
-                $product->image = $imageName;
-            }
+        try {
+            $request->validate([
+                'name' => 'required|string|max:100',
+                'slug' => 'required|unique:products,slug',
+                'short_description' => 'required|string',
+                'description' => 'required|string',
+                'regular_price' => 'required|numeric|min:0',
+                'sale_price' => 'required|numeric|min:0',
+                'SKU' => 'required|unique:products,SKU',
+                'stock_status' => 'required|in:inStock,outOfStock',
+                'featured' => 'required|in:0,1',
+                'quantity' => 'required|integer|min:0',
+                'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'images' => 'nullable|array',
+                'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+                'gallery_images' => 'nullable|array',
+                'gallery_images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+                'category_id' => 'required|exists:categories,id',
+                'brand_id' => 'required|exists:brands,id'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
         }
 
-        $gallery_arr = array();
-        $files = null;
-        if ($request->hasFile('images')) {
-            $files = $request->file('images');
-        } elseif ($request->hasFile('gallery_images')) {
-            $files = $request->file('gallery_images');
-        }
+        try {
+            $product = new Product();
+            $product->name = $request->name;
+            $product->slug = $request->slug;
+            $product->short_description = $request->short_description;
+            $product->description = $request->description;
+            $product->regular_price = $request->regular_price;
+            $product->sale_price = $request->sale_price;
+            $product->SKU = $request->SKU;
+            $product->stock_status = $request->stock_status;
+            $product->featured = $request->featured == '1' ? 1 : 0;
+            $product->quantity = $request->quantity;
+            $product->category_id = $request->category_id;
+            $product->brand_id = $request->brand_id;
 
-        if ($files) {
-            if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
-                foreach ($files as $file) {
-                    $uploaded = $file->storeOnCloudinary('products/gallery');
-                    array_push($gallery_arr, $uploaded->getSecurePath());
-                }
-            } else {
-                $counter = 1;
-                foreach ($files as $file) {
-                    $file_extension = $file->getClientOriginalExtension();
-                    $gFileName = $current_timestamp . '-' . $counter . '.' . $file_extension;
-                    $this->generateProductsThumbnailsImage($file, $gFileName);
-                    array_push($gallery_arr, $gFileName);
-                    $counter++;
+            $current_timestamp = Carbon::now()->timestamp;
+
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
+                    $product->image = $image->storeOnCloudinary('products')->getSecurePath();
+                } else {
+                    $file_extension = $image->getClientOriginalExtension();
+                    $imageName = $current_timestamp . '.' . $file_extension;
+                    
+                    // Ensure directory exists
+                    $dest = public_path('uploads/products');
+                    if (!File::exists($dest)) {
+                        File::makeDirectory($dest, 0755, true);
+                    }
+                    
+                    $this->generateProductsThumbnailsImage($image, $imageName);
+                    $product->image = $imageName;
                 }
             }
-            $product->images = implode(',', $gallery_arr);
+
+            $gallery_arr = array();
+            $files = null;
+            if ($request->hasFile('images')) {
+                $files = $request->file('images');
+            } elseif ($request->hasFile('gallery_images')) {
+                $files = $request->file('gallery_images');
+            }
+
+            if ($files) {
+                if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
+                    foreach ($files as $file) {
+                        $uploaded = $file->storeOnCloudinary('products/gallery');
+                        array_push($gallery_arr, $uploaded->getSecurePath());
+                    }
+                } else {
+                    $counter = 1;
+                    foreach ($files as $file) {
+                        $file_extension = $file->getClientOriginalExtension();
+                        $gFileName = $current_timestamp . '-' . $counter . '.' . $file_extension;
+                        $this->generateProductsThumbnailsImage($file, $gFileName);
+                        array_push($gallery_arr, $gFileName);
+                        $counter++;
+                    }
+                }
+                $product->images = implode(',', $gallery_arr);
+            }
+
+            $product->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Product created successfully',
+                'data' => $product
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create product: ' . $e->getMessage()
+            ], 500);
         }
-
-        $product->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Product created successfully',
-            'data' => $product
-        ], 201);
     }
 
     public function apiShowProduct($id)
@@ -299,97 +314,105 @@ class AdminController extends Controller
             'data' => $product
         ]);
     }
+    
     public function apiUpdateProduct(Request $request, $id)
-{
-    $product = Product::findOrFail($id);
-    
-    if ($request->has('name')) $product->name = $request->name;
-    if ($request->has('slug')) $product->slug = $request->slug;
-    if ($request->has('short_description')) $product->short_description = $request->short_description;
-    if ($request->has('description')) $product->description = $request->description;
-    if ($request->has('regular_price')) $product->regular_price = $request->regular_price;
-    if ($request->has('sale_price')) $product->sale_price = $request->sale_price;
-    if ($request->has('SKU')) $product->SKU = $request->SKU;
-    
-    // Handle stock_status - normalize to lowercase
-    if ($request->has('stock_status')) {
-        $status = strtolower($request->stock_status);
-        // Handle both: instock, inStock, outofstock, outOfStock
-        if (str_contains($status, 'in')) {
-            $product->stock_status = 'instock';
-        } else {
-            $product->stock_status = 'outofstock';
-        }
-    }
-    
-    if ($request->has('featured')) {
-        $product->featured = $request->featured == '1' ? 1 : 0;
-    }
-    if ($request->has('quantity')) $product->quantity = $request->quantity;
-    if ($request->has('category_id')) $product->category_id = $request->category_id;
-    if ($request->has('brand_id')) $product->brand_id = $request->brand_id;
-
-    $current_timestamp = Carbon::now()->timestamp;
-
-    if ($request->hasFile('image')) {
-        if(File::exists(public_path('uploads/products/' . $product->image))) {
-            File::delete(public_path('uploads/products/' . $product->image));
-        }
-        if(File::exists(public_path('uploads/products/thumbnails/' . $product->image))) {
-            File::delete(public_path('uploads/products/thumbnails/' . $product->image));
-        }
-        
-        $image = $request->file('image');
-        if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
-            $product->image = $image->storeOnCloudinary('products')->getSecurePath();
-        } else {
-            $file_extension = $image->getClientOriginalExtension();
-            $imageName = $current_timestamp . '.' . $file_extension;
-            $this->generateProductsThumbnailsImage($image, $imageName);
-            $product->image = $imageName;
-        }
-    }
-
-    if($request->hasFile('images')) {
-        if ($product->images) {
-            foreach(explode(',', $product->images) as $ofile) {
-                if(File::exists(public_path('uploads/products/' . $ofile))) {
-                    File::delete(public_path('uploads/products/' . $ofile));
-                }
-                if(File::exists(public_path('uploads/products/thumbnails/' . $ofile))) {
-                    File::delete(public_path('uploads/products/thumbnails/' . $ofile));
+    {
+        try {
+            $product = Product::findOrFail($id);
+            
+            if ($request->has('name')) $product->name = $request->name;
+            if ($request->has('slug')) $product->slug = $request->slug;
+            if ($request->has('short_description')) $product->short_description = $request->short_description;
+            if ($request->has('description')) $product->description = $request->description;
+            if ($request->has('regular_price')) $product->regular_price = $request->regular_price;
+            if ($request->has('sale_price')) $product->sale_price = $request->sale_price;
+            if ($request->has('SKU')) $product->SKU = $request->SKU;
+            
+            // Handle stock_status - normalize to lowercase
+            if ($request->has('stock_status')) {
+                $status = strtolower($request->stock_status);
+                // Handle both: instock, inStock, outofstock, outOfStock
+                if (str_contains($status, 'in')) {
+                    $product->stock_status = 'instock';
+                } else {
+                    $product->stock_status = 'outofstock';
                 }
             }
-        }
+            
+            if ($request->has('featured')) {
+                $product->featured = $request->featured == '1' ? 1 : 0;
+            }
+            if ($request->has('quantity')) $product->quantity = $request->quantity;
+            if ($request->has('category_id')) $product->category_id = $request->category_id;
+            if ($request->has('brand_id')) $product->brand_id = $request->brand_id;
 
-        $gallery_arr = array();
-        $files = $request->file('images');
-        if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
-            foreach ($files as $file) {
-                $uploaded = $file->storeOnCloudinary('products/gallery');
-                array_push($gallery_arr, $uploaded->getSecurePath());
+            $current_timestamp = Carbon::now()->timestamp;
+
+            if ($request->hasFile('image')) {
+                if(File::exists(public_path('uploads/products/' . $product->image))) {
+                    File::delete(public_path('uploads/products/' . $product->image));
+                }
+                if(File::exists(public_path('uploads/products/thumbnails/' . $product->image))) {
+                    File::delete(public_path('uploads/products/thumbnails/' . $product->image));
+                }
+                
+                $image = $request->file('image');
+                if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
+                    $product->image = $image->storeOnCloudinary('products')->getSecurePath();
+                } else {
+                    $file_extension = $image->getClientOriginalExtension();
+                    $imageName = $current_timestamp . '.' . $file_extension;
+                    $this->generateProductsThumbnailsImage($image, $imageName);
+                    $product->image = $imageName;
+                }
             }
-        } else {
-            $counter = 1;
-            foreach ($files as $file) {
-                $file_extension = $file->getClientOriginalExtension();
-                $gFileName = $current_timestamp . '-' . $counter . '.' . $file_extension;
-                $this->generateProductsThumbnailsImage($file, $gFileName);
-                array_push($gallery_arr, $gFileName);
-                $counter++;
+
+            if($request->hasFile('images')) {
+                if ($product->images) {
+                    foreach(explode(',', $product->images) as $ofile) {
+                        if(File::exists(public_path('uploads/products/' . $ofile))) {
+                            File::delete(public_path('uploads/products/' . $ofile));
+                        }
+                        if(File::exists(public_path('uploads/products/thumbnails/' . $ofile))) {
+                            File::delete(public_path('uploads/products/thumbnails/' . $ofile));
+                        }
+                    }
+                }
+
+                $gallery_arr = array();
+                $files = $request->file('images');
+                if (config('cloudinary.cloudinary_url') || env('CLOUDINARY_URL')) {
+                    foreach ($files as $file) {
+                        $uploaded = $file->storeOnCloudinary('products/gallery');
+                        array_push($gallery_arr, $uploaded->getSecurePath());
+                    }
+                } else {
+                    $counter = 1;
+                    foreach ($files as $file) {
+                        $file_extension = $file->getClientOriginalExtension();
+                        $gFileName = $current_timestamp . '-' . $counter . '.' . $file_extension;
+                        $this->generateProductsThumbnailsImage($file, $gFileName);
+                        array_push($gallery_arr, $gFileName);
+                        $counter++;
+                    }
+                }
+                $product->images = implode(',', $gallery_arr);
             }
+
+            $product->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Product updated successfully',
+                'data' => $product
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update product: ' . $e->getMessage()
+            ], 500);
         }
-        $product->images = implode(',', $gallery_arr);
     }
-
-    $product->save();
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Product updated successfully',
-        'data' => $product
-    ]);
-}
 
     
 
